@@ -22,11 +22,11 @@ Set your preferred expiration date and make sure you grant the **repo** scopes (
 <img width="744" alt="image" src="https://user-images.githubusercontent.com/57295823/153786937-19a8bda1-2d2c-4df2-9fd0-682b6a15228f.png">
 
 
-6. Set the access token by running the following command (replace `<AUTH_TOKEN>` with the generated token):
+4. Set the access token by running the following command (replace `<AUTH_TOKEN>` with the generated token):
 ```shell
 self-assessment --auth-token <AUTH_TOKEN>
 ```
-7. You can now run the CLI tool using the following syntax:
+5. You can now run the CLI tool using the following syntax:
 
 ```shell
 self-assessment --from <YYYY-MM-DD> --to <YYYY-MM-DD>

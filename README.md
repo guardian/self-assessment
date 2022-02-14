@@ -2,7 +2,7 @@
 
 A tool that generates a list of PRs authored and reviewed by you.
 
-### Usage
+## Usage
 
 1. Generate a GitHub personal access token from [here](https://github.com/settings/tokens/new). \
 Set your preferred expiration date and make sure you grant the **repo** scopes. Click "Generate token".
@@ -17,8 +17,8 @@ cargo run -- --auth-token <AUTH_TOKEN>
 cargo run -- --from YYYY-MM-DD --to YYYY-MM-DD 
 ```
 
-## CLI usage
-```shell
+## CLI information
+```
 self-assessment 0.1.0
 
 USAGE:

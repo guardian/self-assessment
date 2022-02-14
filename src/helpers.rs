@@ -1,4 +1,3 @@
-extern crate handlebars;
 use crate::models::{self, GithubSearchResponse, GithubSearchResponseItem, TemplatePr};
 use colorsys::{Hsl, Rgb};
 use handlebars::{to_json, Handlebars};

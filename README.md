@@ -17,9 +17,9 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 2. Clone the repository to your local machine and `cd` into the root folder.
 
-3. Run `cargo build` to build the binary executable.
+3. Run `cargo build --release` to build the binary executable.
 
-4. `cd` into `target/debug`. This is where you will find the CLI executable that was built with the previous command.
+4. `cd` into `target/release`. This is where you will find the CLI executable that was built with the previous command.
 
 5. You can now use the CLI tool! But first, you need to generate a GitHub personal access token 👉 [here](https://github.com/settings/tokens/new) 👈\
 Set your preferred expiration date and make sure you grant the **repo** scopes (avoid "No expiration" for security reasons). Finally, click "Generate token".\

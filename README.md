@@ -22,8 +22,11 @@ cargo run -- --auth-token <AUTH_TOKEN>
 3. You can now run the CLI tool using the following syntax:
 
 ```shell
-cargo run -- --from YYYY-MM-DD --to YYYY-MM-DD 
+cargo run -- --from <YYYY-MM-DD> --to <YYYY-MM-DD>
 ```
+Both the `--from` and `--to` flags are optional.\
+If no flags are specified (i.e. if you just execute `cargo run`), you will get a list of all PRs with no time constraints. This is not recommended, as it is likely to incur GitHub's secondary rate limit (particularly if you've been at the Guardian a long time and are a prolific contributor). 
+Omitting one of the two flags also works (e.g `cargo run -- --from 2021-10-01`).
 
 If all goes well, you should see an automatically generated HTML page containing useful information about PRs authored and reviewed by you.
 

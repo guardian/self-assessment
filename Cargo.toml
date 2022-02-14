@@ -2,7 +2,7 @@
 name = "self-assessment"
 version = "0.1.0"
 edition = "2021"
-description = "A CLI tool to generate a list of pull requests raised and reviewed in the Guardian's GitHub organisation."
+description = "A CLI tool that generates a list of pull requests raised and reviewed in the Guardian's GitHub organisation."
 license = "MIT"
 repository = "https://github.com/guardian/self-assessment"
 keywords = ["guardian", "cli-tool", "cli", "self-assessment", "github"]

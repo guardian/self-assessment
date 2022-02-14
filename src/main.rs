@@ -1,5 +1,5 @@
-pub mod models;
 pub mod helpers;
+pub mod models;
 use crate::models::Args;
 use clap::StructOpt;
 use helpers::*;
@@ -7,7 +7,7 @@ use models::GuardianPullRequests;
 use octocrab::Octocrab;
 use std::error::Error;
 use std::os::unix::prelude::CommandExt;
-use std::process::{Command, self};
+use std::process::{self, Command};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -15,7 +15,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     // Check if auth token exists in the user's system. If not, it must be passed
     // as an env variable when running the executable binary
-    let auth_token = get_auth_token()?;
+    let auth_token = get_auth_token(&args)?;
     let octocrab = Octocrab::builder().personal_token(auth_token).build()?;
 
     let user = octocrab.current().user().await?;
@@ -50,11 +50,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
             let mut open = Command::new("open");
             open.arg(output_file_name);
             open.exec();
-        },
+        }
         Err(err) => {
             eprintln!("{}", err);
             process::exit(1);
-        },
+        }
     }
 
     Ok(())

@@ -1,4 +1,4 @@
-use crate::models::{GithubSearchResponse, GithubSearchResponseItem, TemplatePr, self};
+use crate::models::{self, GithubSearchResponse, GithubSearchResponseItem, TemplatePr};
 use colorsys::{Hsl, Rgb};
 use handlebars::{to_json, Handlebars};
 use ini::Ini;
@@ -13,22 +13,37 @@ use std::process;
 use std::{borrow::Cow, collections::HashMap};
 use url::Url;
 
-pub fn get_auth_token() -> Result<String, Box<dyn Error>> {
+pub fn get_auth_token(args: &crate::models::Args) -> Result<String, Box<dyn Error>> {
     let env_var_path = format!("{}/.selfassessment", shellexpand::tilde("~/"));
+
+    if !args.auth_token.is_empty() {
+        let mut env_var_file = File::create(env_var_path)?;
+        match env_var_file.write_all(format!("GITHUB_TOKEN={}", args.auth_token).as_bytes()) {
+            Ok(_) => println!("[self-assessment] 🔑 Personal access token set successfully."),
+            Err(_) => eprintln!("[self-assessment] ❌ Unable to set authentication credentials."),
+        };
+        process::exit(0);
+    }
 
     if Path::new(&env_var_path).exists() {
         let mut conf = Ini::load_from_file(&env_var_path).unwrap();
-        std::env::set_var(
-            "GITHUB_TOKEN",
-            conf.with_general_section().get("GITHUB_TOKEN").unwrap(),
-        );
-    } else {
-        let token = std::env::var("GITHUB_TOKEN").expect("GITHUB_TOKEN env variable is required");
-        let mut env_var_file = File::create(env_var_path)?;
-        env_var_file.write_all(format!("GITHUB_TOKEN={}", token).as_bytes())?;
+        match conf.with_general_section().get("GITHUB_TOKEN") {
+            Some(t) => std::env::set_var("GITHUB_TOKEN", t),
+            None => {
+                eprintln!("[self-assessment] ❌ Unable to fetch authentication credentials from local config file.");
+                eprintln!("[self-assessment] ❌ Please try and run the tool with the --auth-token flag again.");
+                process::exit(1);
+            }
+        }
     }
 
-    Ok(std::env::var("GITHUB_TOKEN").unwrap())
+    match std::env::var("GITHUB_TOKEN") {
+        Ok(t) => Ok(t),
+        Err(_) => {
+            eprintln!("[self-assessment] ❌ Unable to fetch authentication credentials.");
+            process::exit(1);
+        }
+    }
 }
 
 pub fn prepare_parameters<'a>() -> HashMap<&'static str, Cow<'a, str>> {
@@ -168,7 +183,7 @@ pub fn generate_html_file(
     reg.render_to_write("template", &data, &mut output_file)?;
 
     println!(
-        "✨ Generated a report containing {} PRs ({} authored, {} reviewed)",
+        "[self-assessment] ✨ Generated a report containing {} PRs ({} authored, {} reviewed)",
         prs.len() + reviews.len(),
         prs.len(),
         reviews.len()

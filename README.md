@@ -4,8 +4,8 @@ A tool that generates a list of PRs authored and reviewed by you.
 
 ## Usage
 
-1. Generate a GitHub personal access token from [here](https://github.com/settings/tokens/new). \
-Set your preferred expiration date and make sure you grant the **repo** scopes. Click "Generate token".
+1. Generate a GitHub personal access token 👉 [here](https://github.com/settings/tokens/new) 👈\
+Set your preferred expiration date and make sure you grant the **repo** scopes. Finally, click "Generate token".
 
 2. Set the access token by running the following (replace `<AUTH_TOKEN>` with the generated token).
 ```shell

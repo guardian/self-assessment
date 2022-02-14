@@ -1,3 +1,4 @@
+extern crate handlebars;
 use crate::models::{self, GithubSearchResponse, GithubSearchResponseItem, TemplatePr};
 use colorsys::{Hsl, Rgb};
 use handlebars::{to_json, Handlebars};
@@ -169,9 +170,8 @@ pub fn generate_html_file(
     args: &crate::models::Args,
 ) -> Result<(), Box<dyn Error>> {
     let mut reg = Handlebars::new();
-    reg.register_template_file("template", "./src/template/template.hbs")
-        .unwrap();
-
+    static TEMPLATE: &str = include_str!("./template/template.hbs");
+    reg.register_template_string("template", TEMPLATE).unwrap();
     let from = if args.from == "*" {
         "From the day you joined the Guardian".to_string()
     } else {

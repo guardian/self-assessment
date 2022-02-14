@@ -172,14 +172,24 @@ pub fn generate_html_file(
     reg.register_template_file("template", "./src/template/template.hbs")
         .unwrap();
 
+    let from = if args.from == "*" {
+        "From the day you joined the Guardian".to_string()
+    } else {
+        format!("From {}", args.from)
+    };
+    let to = if args.to == "*" {
+        "until today".to_string()
+    } else {
+        format!("to {}", args.to)
+    };
     let mut data = Map::new();
     data.insert("user".to_string(), to_json(user.login));
     data.insert("prs".to_string(), to_json(prs));
     data.insert("reviews".to_string(), to_json(reviews));
     data.insert("prs_len".to_string(), to_json(prs.len()));
     data.insert("reviews_len".to_string(), to_json(reviews.len()));
-    data.insert("start_date".to_string(), to_json(args.from.clone()));
-    data.insert("end_date".to_string(), to_json(args.to.clone()));
+    data.insert("start_date".to_string(), to_json(from));
+    data.insert("end_date".to_string(), to_json(to));
 
     let output_file_name = "self-assessment.html";
     let mut output_file = File::create(output_file_name)?;

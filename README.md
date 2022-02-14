@@ -9,24 +9,36 @@ It is not meant to be the be-all and end-all of the self-assessment journey. Use
 
 ## Usage
 
-1. Generate a GitHub personal access token 👉 [here](https://github.com/settings/tokens/new) 👈\
-Set your preferred expiration date and make sure you grant the **repo** scopes (avoid no expiration). Finally, click "Generate token".\
+1. You need Rust to build the executable. Running the following command will install the Rust toolchain on your machine. If Rust is already installed, skip this step.
+```shell
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
+
+2. Clone the repository to your local machine and `cd` into the root folder.
+
+3. Run `cargo build` to build the binary executable.
+
+4. `cd` into `target/debug`. This is where you will find the CLI executable that was built with the previous command.
+
+5. You can now use the CLI tool! But first, you need to generate a GitHub personal access token 👉 [here](https://github.com/settings/tokens/new) 👈\
+Set your preferred expiration date and make sure you grant the **repo** scopes (avoid "No expiration" for security reasons). Finally, click "Generate token".\
 **NB**: You will need to re-authenticate once the token expires.
 <img width="744" alt="image" src="https://user-images.githubusercontent.com/57295823/153786937-19a8bda1-2d2c-4df2-9fd0-682b6a15228f.png">
 
 
-2. Set the access token by running the following (replace `<AUTH_TOKEN>` with the generated token).
+6. Set the access token by running the following (replace `<AUTH_TOKEN>` with the generated token).
 ```shell
-cargo run -- --auth-token <AUTH_TOKEN>
+./self-assessment --auth-token <AUTH_TOKEN>
 ```
-3. You can now run the CLI tool using the following syntax:
+7. You can now run the CLI tool using the following syntax:
 
 ```shell
-cargo run -- --from <YYYY-MM-DD> --to <YYYY-MM-DD>
+./self-assessment --from <YYYY-MM-DD> --to <YYYY-MM-DD>
 ```
 Both the `--from` and `--to` flags are optional.\
-If no flags are specified (i.e. if you just execute `cargo run`), you will get a list of all PRs with no time constraints. This is not recommended, as it is likely to incur GitHub's secondary rate limit (particularly if you've been at the Guardian a long time and are a prolific contributor). 
-Omitting one of the two flags also works (e.g `cargo run -- --from 2021-10-01`).
+If no flags are specified (i.e. if you just execute `./self-assessment`), you will get a list of all PRs with no time constraints. This is not recommended, as it is likely to incur GitHub's secondary rate limit (particularly if you've been at the Guardian a long time and are a prolific contributor). 
+Omitting one of the two flags also works (e.g `./self-assessment --from 2021-10-01`).
 
 If all goes well, you should see an automatically generated HTML page containing useful information about PRs authored and reviewed by you.
 

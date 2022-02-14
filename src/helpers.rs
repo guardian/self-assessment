@@ -30,7 +30,7 @@ pub fn get_auth_token(args: &crate::models::Args) -> Result<String, Box<dyn Erro
         match conf.with_general_section().get("GITHUB_TOKEN") {
             Some(t) => std::env::set_var("GITHUB_TOKEN", t),
             None => {
-                eprintln!("[self-assessment] ❌ Unable to fetch authentication credentials from local config file.");
+                eprintln!("[self-assessment] ❌ Unable to fetch authentication credentials.");
                 eprintln!("[self-assessment] ❌ Please try and run the tool with the --auth-token flag again.");
                 process::exit(1);
             }
@@ -41,6 +41,9 @@ pub fn get_auth_token(args: &crate::models::Args) -> Result<String, Box<dyn Erro
         Ok(t) => Ok(t),
         Err(_) => {
             eprintln!("[self-assessment] ❌ Unable to fetch authentication credentials.");
+            eprintln!(
+                "[self-assessment] ❌ Please authenticate the tool with the --auth-token flag."
+            );
             process::exit(1);
         }
     }

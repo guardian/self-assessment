@@ -119,15 +119,16 @@ pub struct TemplatePr {
 #[clap(author, version, about, long_about = None)]
 
 pub struct Args {
-    /// Matches PRs that were created after this date
+    /// Match PRs that were created after this date
     #[clap(short, long, default_value = "*")]
     pub from: String,
 
-    /// Matches PRs that were created up until this date
+    /// Match PRs that were created up until this date
     #[clap(short, long, default_value = "*")]
     pub to: String,
 
-    /// Github authentication token necessary to view issues in private repositories
+    /// Github authentication token. This is needed to run the CLI tool.
+    /// You can get a personal access token at https://github.com/settings/tokens/new
     #[clap(short, long, default_value = "")]
     #[serde(rename = "auth-token")]
     pub auth_token: String,

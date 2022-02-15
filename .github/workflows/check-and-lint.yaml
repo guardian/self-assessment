@@ -3,7 +3,8 @@ on:
   push:
     branches:
       - main
-
+    paths:
+      - 'src/**'
 
 name: Check and Lint
 

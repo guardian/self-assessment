@@ -1,9 +1,19 @@
-use clap::Parser;
 use serde::{Deserialize, Serialize};
+use std::fmt::Display;
 
+#[derive(Debug)]
 pub enum GuardianPullRequests {
     AuthoredByMe,
     ReviewedByMe,
+}
+
+impl Display for GuardianPullRequests {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &self {
+            GuardianPullRequests::AuthoredByMe => write!(f, "pull requests authored by you"),
+            GuardianPullRequests::ReviewedByMe => write!(f, "pull requests reviewed by you"),
+        }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -14,7 +24,6 @@ pub struct GithubSearchResponse {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-
 pub struct GithubSearchResponseItem {
     pub url: String,
     pub repository_url: String,
@@ -36,7 +45,7 @@ pub struct GithubSearchResponseItem {
     pub updated_at: String,
     pub closed_at: Option<String>,
     pub pull_request: PullRequest,
-    pub body: String,
+    pub body: Option<String>,
     pub score: f32,
     pub locked: bool,
     pub author_association: String,
@@ -49,6 +58,7 @@ pub struct PullRequest {
     pub diff_url: String,
     pub patch_url: String,
 }
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct User {
     pub login: String,
@@ -112,24 +122,4 @@ pub struct TemplatePr {
     pub labels: String,
     pub author: String,
     pub profile_pic: String,
-}
-
-// CLI struct
-#[derive(Parser, Debug, Serialize)]
-#[clap(author, version, about, long_about = None)]
-
-pub struct Args {
-    /// Match PRs that were created after this date
-    #[clap(short, long, default_value = "*")]
-    pub from: String,
-
-    /// Match PRs that were created up until this date
-    #[clap(short, long, default_value = "*")]
-    pub to: String,
-
-    /// Github authentication token. This is needed to run the CLI tool.
-    /// You can get a personal access token at https://github.com/settings/tokens/new
-    #[clap(short, long, default_value = "")]
-    #[serde(rename = "auth-token")]
-    pub auth_token: String,
 }

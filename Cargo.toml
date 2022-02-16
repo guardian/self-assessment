@@ -1,6 +1,6 @@
 [package]
 name = "self-assessment"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "A CLI tool that generates a list of pull requests raised and reviewed in the Guardian's GitHub organisation."
 license = "MIT"

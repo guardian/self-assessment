@@ -14,7 +14,7 @@ pub struct Args {
     pub to: String,
 
     /// Github authentication token. This is needed for the CLI tool to access
-    /// Guardian's private repositories to which the user has access.
+    /// the Guardian's private repositories to which the user has access.
     /// You can get a personal access token at https://github.com/settings/tokens/new
     #[clap(short, long, default_value = "")]
     #[serde(rename = "auth-token")]

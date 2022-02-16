@@ -1,4 +1,3 @@
-
 use clap::Parser;
 use serde::Serialize;
 

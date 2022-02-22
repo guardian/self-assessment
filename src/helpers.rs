@@ -8,7 +8,7 @@ use colorsys::{Hsl, Rgb};
 use handlebars::{to_json, Context, Handlebars, Helper, Output, RenderContext, RenderError};
 use ini::Ini;
 use models::GuardianPullRequests;
-use octocrab::Octocrab;
+use octocrab::{auth, Octocrab};
 use serde_json::Map;
 //use std::collections::hash_map::Entry;
 use std::error::Error;
@@ -31,32 +31,20 @@ pub fn get_auth_token(args: &crate::cli::Args, flag: AuthFlag) -> Option<String>
     match flag {
         AuthFlag::GitHubAuthToken => {
             if args.auth_token.is_some() {
+                let auth_token = args.auth_token.as_ref().unwrap();
                 maybe_ini
                     .with_section(Some("GitHub"))
-                    .set("GITHUB_TOKEN", args.auth_token.as_ref().unwrap());
+                    .set("GITHUB_TOKEN", auth_token);
                 match maybe_ini.write_to_file(&env_var_path) {
                     Ok(_) => {
-                        std::env::set_var("GITHUB_TOKEN", args.auth_token.as_ref().unwrap());
-                        let key = std::env::var("GITHUB_TOKEN");
-                        match key {
-                            Ok(k) => {
-                                println!("[self-assessment] 🔑 GitHub personal access token set successfully.");
-                                return Some(k);
-                            }
-                            Err(err) => {
-                                eprintln!("{}", err);
-                                process::exit(1);
-                            }
-                        }
+                        println!("[self-assessment] 🔑 GitHub personal access token set successfully.");
+                        return Some(String::from(auth_token));
                     }
                     Err(err) => panic!("{}", err),
                 }
             } else {
                 return match maybe_ini.with_section(Some("GitHub")).get("GITHUB_TOKEN") {
-                    Some(t) => {
-                        std::env::set_var("GITHUB_TOKEN", t);
-                        Some(t.to_string())
-                    }
+                    Some(t) => Some(t.to_string()),
                     None => {
                         eprintln!(
                             "[self-assessment] ❌ Unable to fetch the GitHub authentication token."
@@ -69,32 +57,20 @@ pub fn get_auth_token(args: &crate::cli::Args, flag: AuthFlag) -> Option<String>
         }
         AuthFlag::TrelloApiKey => {
             if args.trello_key.is_some() {
+                let trello_key = args.trello_key.as_ref().unwrap();
                 maybe_ini
                     .with_section(Some("Trello"))
-                    .set("TRELLO_KEY", args.trello_key.as_ref().unwrap());
+                    .set("TRELLO_KEY", trello_key);
                 match maybe_ini.write_to_file(&env_var_path) {
                     Ok(_) => {
-                        std::env::set_var("TRELLO_KEY", args.trello_key.as_ref().unwrap());
-                        let key = std::env::var("TRELLO_KEY");
-                        match key {
-                            Ok(k) => {
-                                println!("[self-assessment] 🔑 Trello API key set successfully.");
-                                return Some(k);
-                            }
-                            Err(err) => {
-                                eprintln!("{}", err);
-                                process::exit(1);
-                            }
-                        }
+                        println!("[self-assessment] 🔑 Trello API key set successfully.");
+                        return Some(String::from(trello_key));
                     }
                     Err(err) => panic!("{}", err),
                 }
             } else {
                 return match maybe_ini.with_section(Some("Trello")).get("TRELLO_KEY") {
-                    Some(t) => {
-                        std::env::set_var("TRELLO_KEY", t);
-                        Some(t.to_string())
-                    }
+                    Some(t) => Some(t.to_string()),
                     None => {
                         eprintln!("[self-assessment] ⚠️ Unable to fetch the Trello API key.");
                         eprintln!("[self-assessment] ⚠️ Please try and run the tool with the --trello-key flag again.");
@@ -105,34 +81,20 @@ pub fn get_auth_token(args: &crate::cli::Args, flag: AuthFlag) -> Option<String>
         }
         AuthFlag::TrelloServerToken => {
             if args.trello_token.is_some() {
+                let trello_token = args.trello_token.as_ref().unwrap();
                 maybe_ini
                     .with_section(Some("Trello"))
-                    .set("TRELLO_TOKEN", args.trello_token.as_ref().unwrap());
+                    .set("TRELLO_TOKEN", trello_token);
                 match maybe_ini.write_to_file(&env_var_path) {
                     Ok(_) => {
-                        std::env::set_var("TRELLO_TOKEN", args.trello_token.as_ref().unwrap());
-                        let key = std::env::var("TRELLO_TOKEN");
-                        match key {
-                            Ok(k) => {
-                                println!(
-                                    "[self-assessment] 🔑 Trello server token set successfully."
-                                );
-                                return Some(k);
-                            }
-                            Err(err) => {
-                                eprintln!("{}", err);
-                                process::exit(1);
-                            }
-                        }
+                        println!("[self-assessment] 🔑 Trello server token set successfully.");
+                        return Some(String::from(trello_token));
                     }
                     Err(err) => panic!("{}", err),
                 }
             } else {
                 return match maybe_ini.with_section(Some("Trello")).get("TRELLO_TOKEN") {
-                    Some(t) => {
-                        std::env::set_var("TRELLO_TOKEN", t);
-                        Some(t.to_string())
-                    }
+                    Some(t) => Some(t.to_string()),
                     None => {
                         eprintln!("[self-assessment] ⚠️ Unable to fetch the Trello server token.");
                         eprintln!("[self-assessment] ⚠️ Please try and run the tool with the --trello-token flag again.");

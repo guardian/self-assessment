@@ -7,29 +7,30 @@
     integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous" />
 <style>
     header {
-     background: rgb(5, 41, 98);
-    padding: 30px;
+        background: rgb(5, 41, 98);
+        padding: 30px;
 
     }
 
-    header > h1 {
-    font-family: "GT Guardian Titlepiece", Georgia, serif;
-    font-size: 2.625rem;
-    line-height: 1.15;
-    font-weight: 700;
-    color: rgb(255, 255, 255);
-    margin: auto;
-    text-align: center;
-}
-header > h4 {
-    font-family: "GT Guardian Titlepiece", Georgia, serif;
-    font-size: 1.2rem;
-    line-height: 2;
-    font-weight: 700;
-    color: rgb(255, 255, 255);
-    margin: auto;
-    text-align: center;
-}
+    header>h1 {
+        font-family: "GT Guardian Titlepiece", Georgia, serif;
+        font-size: 2.625rem;
+        line-height: 1.15;
+        font-weight: 700;
+        color: rgb(255, 255, 255);
+        margin: auto;
+        text-align: center;
+    }
+
+    header>h4 {
+        font-family: "GT Guardian Titlepiece", Georgia, serif;
+        font-size: 1.2rem;
+        line-height: 2;
+        font-weight: 700;
+        color: rgb(255, 255, 255);
+        margin: auto;
+        text-align: center;
+    }
 
 
     h2 {
@@ -84,62 +85,178 @@ header > h4 {
     }
 
     .prContainer {
-        padding:20px 20px;
+        padding: 20px 20px;
+    }
+
+    .card-container {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        justify-content: flex-start;
+        width: 100%;
+        gap: 20px;
+    }
+
+    .list-card {
+        background-color: #fff;
+        border-radius: 3px;
+        box-shadow: 0 1px 0 #091e4240;
+        cursor: pointer;
+        display: block;
+        margin-bottom: 8px;
+        min-width: 300px;
+        max-width: 300px;
+        min-height: 20px;
+        position: relative;
+        text-decoration: none;
+        z-index: 0;
+        margin: 8px;
+        padding: 8px;
+    }
+
+    .card-label {
+        height: 16px;
+        line-height: 16px;
+        max-width: 198px;
+        padding: 0 8px;
+        float: left;
+        font-size: 12px;
+        font-weight: 700;
+        margin: 0 4px 4px 0;
+        min-width: 40px;
+        text-shadow: none;
+        width: auto;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-color: #b3bac5;
+        border-radius: 4px;
+        color: #fff;
+        display: block;
+        margin-right: 4px;
+        overflow: hidden;
+        position: relative;
+        white-space: nowrap;
+    }
+
+    .card-link {
+        color: #172b4d;
+    }
+
+    .list-wrapper {
+        box-sizing: border-box;
+        display: inline-block;
+        height: 100%;
+        vertical-align: top;
+        max-height: 80vh;
+        border-radius: 8px;
+        border: 1px solid lightgray;
+    }
+
+    .list {
+        background-color: #ebecf0;
+        border-radius: 3px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        max-height: 100%;
+        position: relative;
+        /* white-space: normal; */
+        width: 100% !important;
+    }
+
+    .list-header {
+        flex: 0 0 auto;
+        min-height: 20px;
+        padding: 10px 8px;
+        position: relative;
+    }
+
+    .list-h2 {
+        font-size: 20px;
+        line-height: 24px;
     }
 </style>
 <header>
     <h1>Guardian Self-Assessment Tool</h1>
     <h4>{{start_date}} {{end_date}}</h4>
 </header>
+
 <body>
     <div class="prContainer">
-    <h2>{{prs_len}} PRs authored by {{user}}</h2>
-    <details open>
-        <summary>Click to expand/collapse</summary>
-        <ul>
-            {{#each prs as |p| }}
-            <li class="listLi">
-                <details>
-                    <summary>{{{p.status}}} <div class="createdAt">{{ p.created_at }}</div>
-                        <img class="avatar" height="40" width="40" alt="@{{p.author}}" src={{p.profile_pic}}> <strong><a
-                                href="{{p.html_url}}">{{p.title}}</a></strong> (<a
-                            href="https://github.com/guardian/{{p.repo_name}}">{{p.repo_name}})</a> {{{p.labels}}}
-                        {{#if p.comments_present.0}}
-                        ({{p.comments}} comment{{#unless p.comments_present.1}}s{{/unless}})
-                        {{/if}}
-                    </summary>
-                    <p>
-                        {{{p.body}}}
-                    </p>
-                </details>
-            </li>
-            {{/each}}
-        </ul>
-    </details>
+        {{!-- <h2>{{prs_len}} PRs authored by {{user}}</h2>
+        <details open>
+            <summary>Click to expand/collapse</summary>
+            <ul>
+                {{#each prs as |p| }}
+                <li class="listLi">
+                    <details>
+                        <summary>{{{p.status}}} <div class="createdAt">{{ p.created_at }}</div>
+                            <img class="avatar" height="40" width="40" alt="@{{p.author}}" src={{p.profile_pic}}>
+                            <strong><a href="{{p.html_url}}">{{p.title}}</a></strong> (<a
+                                href="https://github.com/guardian/{{p.repo_name}}">{{p.repo_name}})</a> {{{p.labels}}}
+                            {{#if p.comments_present.0}}
+                            ({{p.comments}} comment{{#unless p.comments_present.1}}s{{/unless}})
+                            {{/if}}
+                        </summary>
+                        <p>
+                            {{{p.body}}}
+                        </p>
+                    </details>
+                </li>
+                {{/each}}
+            </ul>
+        </details>
 
-    <h2>{{reviews_len}} PRs reviewed by {{user}}</h2>
-    <details open>
-        <summary>Click to expand/collapse</summary>
-        <ul>
-            {{#each reviews as |p| }}
-            <li class="listLi">
-                <details>
-                    <summary>{{{p.status}}} <div class="createdAt">{{ p.created_at }}</div>
-                        <img class="avatar" height="40" width="40" alt="@{{p.author}}" src={{p.profile_pic}}> <strong><a
-                                href="{{p.html_url}}">{{p.title}}</a></strong>
-                        (<a href="https://github.com/guardian/{{p.repo_name}}">{{p.repo_name}})</a> {{{p.labels}}}
-                        {{#if p.comments_present.0}}
-                        ({{p.comments}} comment{{#unless p.comments_present.1}}s{{/unless}})
-                        {{/if}}
-                    </summary>
-                    <p>
-                        {{{p.body}}}
-                    </p>
-                </details>
-            </li>
-            {{/each}}
-        </ul>
-    </details>
+        <h2>{{reviews_len}} PRs reviewed by {{user}}</h2>
+        <details open>
+            <summary>Click to expand/collapse</summary>
+            <ul>
+                {{#each reviews as |p| }}
+                <li class="listLi">
+                    <details>
+                        <summary>{{{p.status}}} <div class="createdAt">{{ p.created_at }}</div>
+                            <img class="avatar" height="40" width="40" alt="@{{p.author}}" src={{p.profile_pic}}>
+                            <strong><a href="{{p.html_url}}">{{p.title}}</a></strong>
+                            (<a href="https://github.com/guardian/{{p.repo_name}}">{{p.repo_name}})</a> {{{p.labels}}}
+                            {{#if p.comments_present.0}}
+                            ({{p.comments}} comment{{#unless p.comments_present.1}}s{{/unless}})
+                            {{/if}}
+                        </summary>
+                        <p>
+                            {{{p.body}}}
+                        </p>
+                    </details>
+                </li>
+                {{/each}}
+            </ul>
+        </details> --}}
+        <h2>{{cards_len}} Trello cards involving {{user.fullName}} in {{array_length trello_boards}} boards</h2>
+        <details open>
+            <summary>Click to expand/collapse</summary>
+            <div class="card-container">
+                {{#each trello_boards as |b| }}
+                <div class="list-wrapper overflow-auto">
+                    <div class="list">
+                        <div class="list-header">
+                            <h2 class="list-h2">
+                                {{b.board}} ({{array_length b.cards}})
+                            </h2>
+                        </div>
+                        {{#each b.cards as |c|}}
+                        <div class="list-card">
+                            <a class="card-link" href={{c.url}}>
+                                <div>{{{c.labels}}}</div>
+                                <div style="clear:both;"><span style="float:left;">{{c.name}}</span></div>
+                                <div style="clear:both;"><img style="max-width:100%; float:right;" width="28" height="28"
+                                        src="{{../../user.avatarUrl}}/30.png" /></div>
+                            </a>
+                        </div>
+                        {{/each}}
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+        </details>
     </div>
 </body>
 

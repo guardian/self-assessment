@@ -23,6 +23,7 @@ shellexpand = "2.1.0"
 rust-ini = "0.17"
 handlebars = "4.2.1"
 colorsys = "0.6.5"
+chrono = { version = "0.4", features = ["serde"] }
 
 [[bin]]
 name = "self-assessment"

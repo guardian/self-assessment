@@ -1,3 +1,4 @@
+use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
 
@@ -109,6 +110,20 @@ pub struct Milestone {
     pub due_on: String,
 }
 
+#[derive(Serialize)]
+pub struct TemplatePr {
+    pub status: String,
+    pub created_at: String,
+    pub title: String,
+    pub html_url: String,
+    pub repo_name: String,
+    pub comments: u32,
+    pub comments_present: (bool, bool),
+    pub body: String,
+    pub labels: String,
+    pub author: String,
+    pub profile_pic: String,
+}
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TrelloBoard {
     pub id: String,
@@ -123,7 +138,7 @@ pub struct TrelloCard {
     pub desc: String,
     pub id_members: Vec<String>,
     pub url: String,
-    pub date_last_activity: String,
+    pub date_last_activity: chrono::DateTime<Utc>,
     pub labels: Vec<TrelloLabel>,
 }
 
@@ -155,19 +170,4 @@ pub struct TrelloUser {
 pub struct BoardAndCards {
     pub board: String,
     pub cards: Vec<TemplateTrelloCard>,
-}
-
-#[derive(Serialize)]
-pub struct TemplatePr {
-    pub status: String,
-    pub created_at: String,
-    pub title: String,
-    pub html_url: String,
-    pub repo_name: String,
-    pub comments: u32,
-    pub comments_present: (bool, bool),
-    pub body: String,
-    pub labels: String,
-    pub author: String,
-    pub profile_pic: String,
 }

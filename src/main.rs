@@ -4,114 +4,103 @@ pub mod models;
 use clap::StructOpt;
 use cli::Args;
 use helpers::*;
-// use octocrab::Octocrab;
-// use reqwest::header::HeaderMap;
-use std::collections::HashMap;
+use octocrab::Octocrab;
 use std::error::Error;
 use std::os::unix::prelude::CommandExt;
 use std::process::{self, Command};
 
 use crate::cli::AuthFlag;
-use crate::models::{TrelloBoard, TrelloCard, TrelloUser};
+use crate::models::GuardianPullRequests;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     let args = Args::parse();
 
+    let github_auth_token = get_auth_token(&args, AuthFlag::GitHubAuthToken);
     let trello_key = get_auth_token(&args, AuthFlag::TrelloApiKey);
     let trello_token = get_auth_token(&args, AuthFlag::TrelloServerToken);
-    let github_auth_token = get_auth_token(&args, AuthFlag::GitHubAuthToken);
-    //let octocrab = Octocrab::builder().personal_token(auth_token).build()?;
 
-    if !(trello_key.is_some() && trello_token.is_some()) {
-        return Ok(());
+    // Configuring auth token triggers the end of the execution
+    exit_upon_setting_credentials(&args);
+
+    // The GitHub auth token is the minimum config parameter needed to run the CLI,
+    // so exit if it's not found
+    if github_auth_token.is_none() {
+        eprintln!("[self-assessment] ❌ Unable to fetch the GitHub authentication token.");
+        eprintln!(
+            "[self-assessment] ❌ Please try and run the tool with the --auth-token flag again."
+        );
+        process::exit(1);
     }
 
-    let trello_client = reqwest::ClientBuilder::new().build()?;
-    println!("[self-assessment] 🗂️ Attempting to collect your Trello cards...");
-    let response: Vec<TrelloBoard> = trello_client
-        .get(format!(
-            "https://api.trello.com/1/members/me/boards?key={}&token={}&fields=id,name",
-            &trello_key.as_ref().unwrap(),
-            &trello_token.as_ref().unwrap()
-        ))
-        .send()
-        .await?
-        .json()
-        .await?;
-    let board_ids = response
-        .iter()
-        .map(|x| (x.id.clone(), x.name.clone()))
-        .collect::<HashMap<String, String>>();
+    // GitHub HTTP client
+    let octocrab = Octocrab::builder()
+        .personal_token(github_auth_token.unwrap())
+        .build()?;
 
-    let trello_user: TrelloUser = trello_client
-        .get(format!(
-            "https://api.trello.com/1/members/me?key={}&token={}&fields=avatarUrl,id,fullName",
-            &trello_key.as_ref().unwrap(),
-            &trello_token.as_ref().unwrap()
-        ))
-        .send()
-        .await?
-        .json()
-        .await?;
+    let github_user = octocrab.current().user().await?;
+    let mut github_params = prepare_parameters();
 
-    let mut trello_cards: HashMap<String, Vec<TrelloCard>> = HashMap::new();
+    // Query the Github API with custom queries
+    let authored_prs = search_pull_requests(
+        &octocrab,
+        GuardianPullRequests::AuthoredByMe,
+        &mut github_params,
+        &args,
+    )
+    .await;
 
-    for (board_id, board_name) in board_ids {
-        let all_cards_in_board: Vec<TrelloCard> = trello_client
-        .get(format!(
-            "https://api.trello.com/1/boards/{}/cards?key={}&token={}&fields=url,idMembers,name,desc,dateLastActivity,labels", 
-            board_id,
-            &trello_key.as_ref().unwrap(),
-            &trello_token.as_ref().unwrap()
-        ))
-        .send()
-        .await?
-        .json()
+    let reviewed_prs = search_pull_requests(
+        &octocrab,
+        GuardianPullRequests::ReviewedByMe,
+        &mut github_params,
+        &args,
+    )
+    .await;
+
+    let formatted_prs = format_prs(&authored_prs);
+    let formatted_reviews = format_prs(&reviewed_prs);
+
+    // Trello integration
+    let mut trello_user = None;
+    let mut formatted_trello_cards = None;
+
+    if trello_key.is_some() && trello_token.is_some() {
+        let trello_client = reqwest::ClientBuilder::new().build()?;
+        let user = search_trello_user(
+            &trello_client,
+            trello_key.as_ref().unwrap().to_string(),
+            trello_token.as_ref().unwrap().to_string(),
+        )
         .await?;
 
-        // Only collect trello cards I'm assigned to
-        let my_cards_only: Vec<TrelloCard> = all_cards_in_board
-            .into_iter()
-            .filter(|card| card.id_members.contains(&trello_user.id))
-            .filter(|card| trello_cards_date_range(card, &args))
-            .collect();
+        let trello_cards = search_trello(
+            &trello_client,
+            trello_key.as_ref().unwrap().to_string(),
+            trello_token.as_ref().unwrap().to_string(),
+            &user,
+            &args,
+        )
+        .await?;
 
-        if !my_cards_only.is_empty() {
-            trello_cards.insert(board_name, my_cards_only);
-        }
+        trello_user = Option::from(user);
+        formatted_trello_cards = Option::from(format_trello_cards(&trello_cards));
+    } else {
+        println!(
+            "[self-assessment] ⏩ Skipping Trello report, as no trello key or token was found."
+        )
     }
-
-    // let user = octocrab.current().user().await?;
-    // let mut params = prepare_parameters();
-
-    // // Query the Github API with custom queries
-    // let authored_prs = search_pull_requests(
-    //     &octocrab,
-    //     GuardianPullRequests::AuthoredByMe,
-    //     &mut params,
-    //     &args,
-    // )
-    // .await;
-    // let reviewed_prs = search_pull_requests(
-    //     &octocrab,
-    //     GuardianPullRequests::ReviewedByMe,
-    //     &mut params,
-    //     &args,
-    // )
-    // .await;
-
-    // let formatted_prs = format_prs(&authored_prs);
-    // let formatted_reviews = format_prs(&reviewed_prs);
-    let formatted_trello_cards = format_trello_cards(&trello_cards);
-    //formatted_trello_cards.reverse();
-
-    // Generate HTML file
-    // let output_file_name = "self-assessment.html";
-    // let html_file = generate_html_file(user, &formatted_prs, &formatted_reviews, &args);
 
     let output_file_name = "self-assessment.html";
-    let html_file = generate_html_file(trello_user, &formatted_trello_cards, &args);
+    let html_file = generate_html_file(
+        github_user,
+        &formatted_prs,
+        &formatted_reviews,
+        &trello_user,
+        &formatted_trello_cards,
+        &args,
+    );
+
     // Automatically open the file if the operation succeeds
     match html_file {
         Ok(_) => {

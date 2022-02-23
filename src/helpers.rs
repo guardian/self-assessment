@@ -1,50 +1,93 @@
-use crate::models::{self, GithubSearchResponse, GithubSearchResponseItem, TemplatePr};
+use crate::cli::AuthFlag;
+use crate::models::*;
+use chrono::DateTime;
 use colorsys::{Hsl, Rgb};
-use handlebars::{to_json, Handlebars};
+use handlebars::{to_json, Context, Handlebars, Helper, Output, RenderContext, RenderError};
 use ini::Ini;
-use models::GuardianPullRequests;
 use octocrab::Octocrab;
 use serde_json::Map;
 use std::error::Error;
 use std::fs::File;
-use std::io::prelude::*;
-use std::path::Path;
 use std::process;
 use std::{borrow::Cow, collections::HashMap};
 use url::Url;
 
-pub fn get_auth_token(args: &crate::cli::Args) -> Result<String, Box<dyn Error>> {
-    let env_var_path = format!("{}/.selfassessment", shellexpand::tilde("~/"));
-
-    if !args.auth_token.is_empty() {
-        let mut env_var_file = File::create(env_var_path)?;
-        match env_var_file.write_all(format!("GITHUB_TOKEN={}", args.auth_token).as_bytes()) {
-            Ok(_) => println!("[self-assessment] 🔑 Personal access token set successfully."),
-            Err(_) => eprintln!("[self-assessment] ❌ Unable to set authentication credentials."),
-        };
+pub fn exit_upon_setting_credentials(args: &crate::cli::Args) {
+    if args.auth_token.is_some() {
+        println!("[self-assessment] 🔑 GitHub personal access token set successfully.");
         process::exit(0);
     }
 
-    if Path::new(&env_var_path).exists() {
-        let mut conf = Ini::load_from_file(&env_var_path).unwrap();
-        match conf.with_general_section().get("GITHUB_TOKEN") {
-            Some(t) => std::env::set_var("GITHUB_TOKEN", t),
-            None => {
-                eprintln!("[self-assessment] ❌ Unable to fetch authentication credentials.");
-                eprintln!("[self-assessment] ❌ Please try and run the tool with the --auth-token flag again.");
-                process::exit(1);
-            }
-        }
+    if args.trello_key.is_some() {
+        println!("[self-assessment] 🔑 Trello API key set successfully.");
+        process::exit(0);
     }
 
-    match std::env::var("GITHUB_TOKEN") {
-        Ok(t) => Ok(t),
-        Err(_) => {
-            eprintln!("[self-assessment] ❌ Unable to fetch authentication credentials.");
-            eprintln!(
-                "[self-assessment] ❌ Please authenticate the tool with the --auth-token flag."
-            );
-            process::exit(1);
+    if args.trello_token.is_some() {
+        println!("[self-assessment] 🔑 Trello server token set successfully.");
+        process::exit(0);
+    }
+}
+
+pub fn get_auth_token(args: &crate::cli::Args, flag: AuthFlag) -> Option<String> {
+    // Attempt to load auth credentials from disk
+    let credential_store_path = format!("{}/.selfassessment", shellexpand::tilde("~/"));
+    let mut credential_store = match Ini::load_from_file(&credential_store_path) {
+        Ok(ini) => ini,
+        Err(_) => Ini::new(),
+    };
+
+    match flag {
+        AuthFlag::GitHubAuthToken => {
+            if args.auth_token.is_some() {
+                let github_auth_token = args.auth_token.as_ref().unwrap();
+                credential_store
+                    .with_section(Some("GitHub"))
+                    .set("GITHUB_TOKEN", github_auth_token);
+                match credential_store.write_to_file(&credential_store_path) {
+                    Ok(_) => Some(String::from(github_auth_token)),
+                    Err(err) => panic!("GitHub auth token error: {}", err),
+                }
+            } else {
+                credential_store
+                    .with_section(Some("GitHub"))
+                    .get("GITHUB_TOKEN")
+                    .map(|t| t.to_string())
+            }
+        }
+        AuthFlag::TrelloApiKey => {
+            if args.trello_key.is_some() {
+                let trello_key = args.trello_key.as_ref().unwrap();
+                credential_store
+                    .with_section(Some("Trello"))
+                    .set("TRELLO_KEY", trello_key);
+                match credential_store.write_to_file(&credential_store_path) {
+                    Ok(_) => Some(String::from(trello_key)),
+                    Err(err) => panic!("{}", err),
+                }
+            } else {
+                credential_store
+                    .with_section(Some("Trello"))
+                    .get("TRELLO_KEY")
+                    .map(|t| t.to_string())
+            }
+        }
+        AuthFlag::TrelloServerToken => {
+            if args.trello_token.is_some() {
+                let trello_token = args.trello_token.as_ref().unwrap();
+                credential_store
+                    .with_section(Some("Trello"))
+                    .set("TRELLO_TOKEN", trello_token);
+                match credential_store.write_to_file(&credential_store_path) {
+                    Ok(_) => Some(String::from(trello_token)),
+                    Err(err) => panic!("{}", err),
+                }
+            } else {
+                credential_store
+                    .with_section(Some("Trello"))
+                    .get("TRELLO_TOKEN")
+                    .map(|t| t.to_string())
+            }
         }
     }
 }
@@ -57,7 +100,7 @@ pub fn prepare_parameters<'a>() -> HashMap<&'static str, Cow<'a, str>> {
     params
 }
 
-// Reverse engineered the Github label CSS magic... I think this works???
+// Reverse engineer Github label CSS magic
 pub fn calc_label_colour(colour: &str) -> String {
     let rgb = Rgb::from_hex_str(colour).unwrap();
     let perceived_lightness =
@@ -99,7 +142,7 @@ pub async fn search_pull_requests<'a>(
 
     loop {
         println!(
-            "[self-assessment] {} Attempting to collect {}...",
+            "[self-assessment] {} Collecting {}...",
             match pr_type {
                 GuardianPullRequests::AuthoredByMe => "🔎",
                 GuardianPullRequests::ReviewedByMe => "🔍",
@@ -126,6 +169,128 @@ pub async fn search_pull_requests<'a>(
     }
 
     all_results
+}
+
+pub async fn search_trello_user(
+    trello_client: &reqwest::Client,
+    trello_key: String,
+    trello_token: String,
+) -> Result<TrelloUser, Box<dyn Error>> {
+    let trello_user: TrelloUser = trello_client
+        .get(format!(
+            "https://api.trello.com/1/members/me?key={}&token={}&fields=avatarUrl,id,fullName",
+            &trello_key, &trello_token
+        ))
+        .send()
+        .await?
+        .json()
+        .await?;
+
+    Ok(trello_user)
+}
+
+pub async fn search_trello(
+    trello_client: &reqwest::Client,
+    trello_key: String,
+    trello_token: String,
+    trello_user: &TrelloUser,
+    args: &crate::cli::Args,
+) -> Result<HashMap<String, Vec<TrelloCard>>, Box<dyn Error>> {
+    println!("[self-assessment] 🃏 Collecting your Trello cards...");
+    let response: Vec<TrelloBoard> = trello_client
+        .get(format!(
+            "https://api.trello.com/1/members/me/boards?key={}&token={}&fields=id,name",
+            &trello_key, &trello_token
+        ))
+        .send()
+        .await?
+        .json()
+        .await?;
+
+    let board_ids = response
+        .iter()
+        .map(|x| (x.id.clone(), x.name.clone()))
+        .collect::<HashMap<String, String>>();
+
+    let mut trello_cards: HashMap<String, Vec<TrelloCard>> = HashMap::new();
+
+    for (board_id, board_name) in board_ids {
+        let all_cards_in_board: Vec<TrelloCard> = trello_client
+        .get(format!(
+            "https://api.trello.com/1/boards/{}/cards?key={}&token={}&fields=url,idMembers,name,desc,dateLastActivity,labels", 
+            board_id,
+            &trello_key,
+            &trello_token
+        ))
+        .send()
+        .await?
+        .json()
+        .await?;
+
+        // Only collect trello cards you're assigned to
+        let my_cards_only: Vec<TrelloCard> = all_cards_in_board
+            .into_iter()
+            .filter(|card| card.id_members.contains(&trello_user.id))
+            .filter(|card| trello_cards_date_range(card, args))
+            .collect();
+
+        if !my_cards_only.is_empty() {
+            trello_cards.insert(board_name, my_cards_only);
+        }
+    }
+
+    Ok(trello_cards)
+}
+
+pub fn array_length_helper(
+    h: &Helper,
+    _: &Handlebars,
+    _: &Context,
+    _: &mut RenderContext,
+    out: &mut dyn Output,
+) -> Result<(), RenderError> {
+    let length = h
+        .param(0)
+        .as_ref()
+        .and_then(|v| v.value().as_array())
+        .map(|arr| arr.len())
+        .ok_or_else(|| {
+            RenderError::new("Param 0 with 'array' type is required for array_length helper")
+        })?;
+
+    out.write(length.to_string().as_ref())?;
+
+    Ok(())
+}
+
+pub fn trello_cards_date_range(card: &TrelloCard, args: &crate::cli::Args) -> bool {
+    let from = match args.from.as_str() {
+        "*" => true,
+        _ => {
+            card.date_last_activity
+                >= DateTime::parse_from_rfc3339(&format!("{}T00:00:00.00Z", args.from)).unwrap()
+        }
+    };
+
+    let to = match args.to.as_str() {
+        "*" => true,
+        _ => {
+            card.date_last_activity
+                <= DateTime::parse_from_rfc3339(&format!("{}T00:00:00.00Z", args.to)).unwrap()
+        }
+    };
+
+    from && to
+}
+
+// Returns a tuple containing the number of boards and the number of total cards across all boards
+pub fn trello_board_and_cards_len(boards_with_cards: &[BoardAndCards]) -> (usize, usize) {
+    let board_size = boards_with_cards.len();
+    let total_cards = boards_with_cards
+        .iter()
+        .map(|x| x.cards.len())
+        .sum::<usize>();
+    (board_size, total_cards)
 }
 
 pub fn format_prs(results: &[GithubSearchResponseItem]) -> Vec<TemplatePr> {
@@ -178,15 +343,71 @@ pub fn format_prs(results: &[GithubSearchResponseItem]) -> Vec<TemplatePr> {
     .collect()
 }
 
+fn template_card_from_unformatted_card(card: &TrelloCard) -> TemplateTrelloCard {
+    TemplateTrelloCard {
+        name: card.name.to_string(),
+        url: card.url.to_string(),
+        labels: card
+            .labels
+            .iter()
+            .map(|l| {
+                format!(
+                    "<span class=\"card-label\" style=\"background-color:{}\"><span>{}</span></span>",
+                    match &l.color {
+                        Some(c) => match c.as_str() {
+                            "green" => "#61bd4f",
+                            "yellow" => "#f2d600",
+                            "orange" => "#ff9f1a",
+                            "red" => "#eb5a46",
+                            "purple" => "#c377e0",
+                            "blue" => "#0079bf",
+                            "sky" => "#00c2e0",
+                            "lime" => "#51e898",
+                            "pink" => "#ff78cb",
+                            "black" => "#344563",
+                            _ => "#344563",
+                        },
+                        None => "",
+                    }, &l.name
+                )
+            })
+            .collect::<Vec<String>>()
+            .join(" "),
+        }
+}
+
+pub fn format_trello_cards(cards: &HashMap<String, Vec<TrelloCard>>) -> Vec<BoardAndCards> {
+    let mut formatted_cards: HashMap<String, Vec<TemplateTrelloCard>> = HashMap::new();
+    for (key, value) in cards.iter() {
+        formatted_cards.insert(
+            key.to_string(),
+            value
+                .iter()
+                .map(template_card_from_unformatted_card)
+                .collect::<Vec<TemplateTrelloCard>>(),
+        );
+    }
+    formatted_cards
+        .into_iter()
+        .map(|(board, cards)| BoardAndCards { board, cards })
+        .collect()
+}
+
 pub fn generate_html_file(
     user: octocrab::models::User,
     prs: &[TemplatePr],
     reviews: &[TemplatePr],
+    trello_user: &Option<TrelloUser>,
+    trello_board_with_cards: &Option<Vec<BoardAndCards>>,
     args: &crate::cli::Args,
 ) -> Result<(), Box<dyn Error>> {
     let mut reg = Handlebars::new();
-    static TEMPLATE: &str = include_str!("./template/template.hbs");
+    reg.register_helper("array_length", Box::new(array_length_helper));
     reg.register_template_string("template", TEMPLATE).unwrap();
+
+    // Write HTML template into binary
+    static TEMPLATE: &str = include_str!("./template/template.hbs");
+
     let from = if args.from == "*" {
         "From the day you joined the Guardian".to_string()
     } else {
@@ -197,14 +418,34 @@ pub fn generate_html_file(
     } else {
         format!("to {}", args.to)
     };
+
     let mut data = Map::new();
-    data.insert("user".to_string(), to_json(user.login));
+
+    // GitHub Template
+    data.insert("github_user".to_string(), to_json(user.login));
     data.insert("prs".to_string(), to_json(prs));
     data.insert("reviews".to_string(), to_json(reviews));
     data.insert("prs_len".to_string(), to_json(prs.len()));
     data.insert("reviews_len".to_string(), to_json(reviews.len()));
-    data.insert("start_date".to_string(), to_json(from));
-    data.insert("end_date".to_string(), to_json(to));
+    data.insert(
+        "trello_boards".to_string(),
+        to_json(trello_board_with_cards),
+    );
+
+    // Trello Template
+    let mut board_len: usize = 0;
+    let mut c_len: usize = 0;
+
+    if let (Some(u), Some(b)) = (trello_user, trello_board_with_cards) {
+        let (b_len, cards_len) = trello_board_and_cards_len(b);
+        c_len = cards_len;
+        data.insert("cards_len".to_string(), to_json(cards_len));
+        data.insert("user".to_string(), to_json(u));
+        data.insert("start_date".to_string(), to_json(from));
+        data.insert("end_date".to_string(), to_json(to));
+        data.insert("display_trello".to_string(), to_json(true));
+        board_len = b_len;
+    }
 
     let output_file_name = "self-assessment.html";
     let mut output_file = File::create(output_file_name)?;
@@ -216,6 +457,12 @@ pub fn generate_html_file(
         prs.len(),
         reviews.len()
     );
+    if trello_board_with_cards.is_some() {
+        println!(
+            "[self-assessment] ✨ ...including {} cards in {} Trello boards",
+            c_len, board_len
+        )
+    }
 
     Ok(())
 }

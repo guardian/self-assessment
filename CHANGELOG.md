@@ -3,6 +3,17 @@ All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
  
+## [1.0.0] - 2022-02-23
+ 
+### Added
+- 🎉 The tool now supports Trello integration. In order to make requests to the Trello API, authentication credentials can now be set with the new `--trello-key` and `--trello-token` flags. The parameters are optional, and if neither is set, the tool will only generate a report
+containing GitHub pull requests. 
+- To support Trello, new structs have been added to the `models` crate.
+ 
+### Changed
+- All CLI flags that require the user's input have now been changed from type `String` to `Option<String>` to allow the tool to run even when Trello credentials are not set.
+- The Handlebars template now includes a section for Trello boards, which is conditionally rendered based on whether authentication credentials are set.
+
 ## [0.1.1] - 2022-02-16
  
 ### Added

@@ -87,10 +87,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
         formatted_trello_cards = Option::from(format_trello_cards(&trello_cards));
     } else {
         println!(
-            "[self-assessment] ⏩ Skipping Trello report, as no trello key or token was found."
+            "[self-assessment] ⏩ Skipping Trello report because either the Trello API key or the Trello server token has not been set."
         )
     }
 
+    // Generate HTML file
     let output_file_name = "self-assessment.html";
     let html_file = generate_html_file(
         github_user,

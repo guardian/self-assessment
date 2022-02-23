@@ -1,7 +1,7 @@
 # Guardian Self Assessment CLI tool
 
 ## What?
-`self-assessment` is a tool that generates a list of PRs authored and reviewed by you.
+`self-assessment` is a tool that generates a list of PRs authored and reviewed by you, as well as an optional report of Trello boards and cards you are assigned to.
 
 ## Why? 
 Assessing oneself is hard - this tool aims to make the process a little bit easier.\

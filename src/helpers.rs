@@ -457,7 +457,7 @@ pub fn generate_html_file(
         prs.len(),
         reviews.len()
     );
-    if c_len > 0 {
+    if trello_board_with_cards.is_some() {
         println!(
             "[self-assessment] ✨ ...including {} cards in {} Trello boards",
             c_len, board_len

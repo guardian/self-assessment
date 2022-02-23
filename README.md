@@ -42,8 +42,6 @@ If all goes well, you should see an automatically generated HTML page containing
 <img width="1765" alt="image" src="https://user-images.githubusercontent.com/57295823/153787265-5afab18f-d26b-4357-acd9-2f999206b440.png">
 
 ## Trello report
-
-
 In order to display the Trello cards your name is assigned to, you need to configure the CLI with a Trello API key and a token.
 #### Step 1
 You can obtain a key by [logging into Trello](https://trello.com/login) and then visiting https://trello.com/app-key (**please note that this page will throw an error if you are not logged in**).

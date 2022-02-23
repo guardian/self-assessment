@@ -12,7 +12,7 @@ containing GitHub pull requests.
  
 ### Changed
 - All CLI flags that require the user's input have now been changed from type `String` to `Option<String>` to allow the tool to run even when Trello credentials are not set.
-- The Handlebars template now includes a section for Trello boards, which is conditionally rendered based on whether Trello authentication credentials are set.
+- The Handlebars template now includes a section for Trello boards, which is conditionally rendered.
 
 ## [0.1.1] - 2022-02-16
  

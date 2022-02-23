@@ -14,17 +14,17 @@ use url::Url;
 
 pub fn exit_upon_setting_credentials(args: &crate::cli::Args) {
     if args.auth_token.is_some() {
-        println!("🔑 [self-assessment] GitHub personal access token set successfully.");
+        println!("[self-assessment] 🔑 GitHub personal access token set successfully.");
         process::exit(0);
     }
 
     if args.trello_key.is_some() {
-        println!("🔑 [self-assessment] Trello API key set successfully.");
+        println!("[self-assessment] 🔑 Trello API key set successfully.");
         process::exit(0);
     }
 
     if args.trello_token.is_some() {
-        println!("🔑 [self-assessment] Trello server token set successfully.");
+        println!("[self-assessment] 🔑 Trello server token set successfully.");
         process::exit(0);
     }
 }
@@ -283,7 +283,7 @@ pub fn trello_cards_date_range(card: &TrelloCard, args: &crate::cli::Args) -> bo
     from && to
 }
 
-/// Returns a tuple containing the number of boards and the number of total cards across all boards
+// Returns a tuple containing the number of boards and the number of total cards across all boards
 pub fn trello_board_and_cards_len(boards_with_cards: &[BoardAndCards]) -> (usize, usize) {
     let board_size = boards_with_cards.len();
     let total_cards = boards_with_cards

@@ -57,7 +57,7 @@ From the [same page](https://trello.com/app-key), click the link to generate a s
 
 <img width="613" alt="image" src="https://user-images.githubusercontent.com/57295823/155423334-0483e732-4bf5-4317-bc07-2a550473303f.png">
 
-You will be taken to a page to generate a sever token. Please note that this token is set to never expire by default (`authorize?expiration=never`). It is strongly recommended that you change the query parameter in the URL to `authorize?expiration=30days` for security reasons.
+You will be taken to a page to generate a sever token, which is set to never expire by default (`authorize?expiration=never`). It is strongly recommended that you change the query parameter in the URL to `authorize?expiration=30days` for security reasons.
 
 Once you have obtained your token, run the following command from the terminal:
 

@@ -1,6 +1,6 @@
 use crate::cli::AuthFlag;
 use crate::models::*;
-use chrono::DateTime;
+use chrono::{DateTime, Datelike};
 use colorsys::{Hsl, Rgb};
 use handlebars::{to_json, Context, Handlebars, Helper, Output, RenderContext, RenderError};
 use ini::Ini;
@@ -400,7 +400,7 @@ pub fn generate_html_file(
     trello_user: &Option<TrelloUser>,
     trello_board_with_cards: &Option<Vec<BoardAndCards>>,
     args: &crate::cli::Args,
-) -> Result<(), Box<dyn Error>> {
+) -> Result<String, Box<dyn Error>> {
     let mut reg = Handlebars::new();
     reg.register_helper("array_length", Box::new(array_length_helper));
     reg.register_template_string("template", TEMPLATE).unwrap();
@@ -447,8 +447,15 @@ pub fn generate_html_file(
         board_len = b_len;
     }
 
-    let output_file_name = "self-assessment.html";
-    let mut output_file = File::create(output_file_name)?;
+    let now = chrono::Utc::now();
+    let output_file_name = format!(
+        "{}-{:02}-{:02}-self-assessment.html",
+        now.year_ce().1,
+        now.month(),
+        now.day()
+    );
+    
+    let mut output_file = File::create(&output_file_name)?;
     reg.render_to_write("template", &data, &mut output_file)?;
 
     println!(
@@ -464,5 +471,5 @@ pub fn generate_html_file(
         )
     }
 
-    Ok(())
+    Ok(output_file_name)
 }

@@ -92,7 +92,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
     }
 
     // Generate HTML file
-    let output_file_name = "self-assessment.html";
     let html_file = generate_html_file(
         github_user,
         &formatted_prs,
@@ -104,9 +103,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     // Automatically open the file if the operation succeeds
     match html_file {
-        Ok(_) => {
+        Ok(file_name) => {
             let mut open = Command::new("open");
-            open.arg(output_file_name);
+            open.arg(file_name);
             open.exec();
         }
         Err(err) => {

@@ -1,6 +1,6 @@
 use crate::cli::AuthFlag;
 use crate::models::*;
-use chrono::DateTime;
+use chrono::{DateTime, Datelike};
 use colorsys::{Hsl, Rgb};
 use handlebars::{to_json, Context, Handlebars, Helper, Output, RenderContext, RenderError};
 use ini::Ini;
@@ -447,7 +447,14 @@ pub fn generate_html_file(
         board_len = b_len;
     }
 
-    let output_file_name = "self-assessment.html";
+    let now = chrono::Utc::now();
+    let output_file_name = format!(
+        "[{}-{:02}-{:02}] self-assessment.html",
+        now.year_ce().1,
+        now.month(),
+        now.day()
+    );
+    
     let mut output_file = File::create(output_file_name)?;
     reg.render_to_write("template", &data, &mut output_file)?;
 

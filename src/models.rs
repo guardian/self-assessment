@@ -106,8 +106,8 @@ pub struct Milestone {
     pub closed_issues: u32,
     pub created_at: String,
     pub updated_at: String,
-    pub closed_at: String,
-    pub due_on: String,
+    pub closed_at: Option<String>,
+    pub due_on: Option<String>,
 }
 
 #[derive(Serialize)]

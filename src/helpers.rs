@@ -454,7 +454,7 @@ pub fn generate_html_file(
         now.month(),
         now.day()
     );
-    
+
     let mut output_file = File::create(&output_file_name)?;
     reg.render_to_write("template", &data, &mut output_file)?;
 

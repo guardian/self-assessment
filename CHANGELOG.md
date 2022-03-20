@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
+
+## [1.0.2] - 2022-03-20
+
+### Fixed
+- The tool no longer breaks when the GitHub search response includes issues.
  
  ## [1.0.1] - 2022-03-16
 

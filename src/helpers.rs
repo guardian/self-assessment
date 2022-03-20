@@ -124,7 +124,7 @@ pub async fn search_pull_requests<'a>(
             params.insert(
                 "q",
                 Cow::from(format!(
-                    "author:@me org:guardian created:{}..{}",
+                    "org:guardian author:@me is:pr created:{}..{}",
                     args.from, args.to
                 )),
             );
@@ -133,7 +133,7 @@ pub async fn search_pull_requests<'a>(
             params.insert(
                 "q",
                 Cow::from(format!(
-                    "reviewed-by:@me -author:@me org:guardian created:{}..{}",
+                    "org:guardian -author:@me reviewed-by:@me is:pr created:{}..{}",
                     args.from, args.to
                 )),
             );

@@ -1,6 +1,6 @@
 [package]
 name = "self-assessment"
-version = "1.0.1"
+version = "1.0.2"
 edition = "2021"
 description = "A CLI tool that generates a list of pull requests raised and reviewed in the Guardian's GitHub organisation, as well as an optional summary of the user's Trello boards and cards."
 license = "MIT"

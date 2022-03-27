@@ -3,6 +3,16 @@ All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
+## [1.1.0] - 2022-03-28
+
+### Added
+- It is now possible to pass the `--skip-trello` flag (or `-s` in short) to generate a report that does not include Trello cards. 
+Previously, setting a Trello API key and a server token would always include the Trello report; the new flag overrides this behaviour.
+
+### Fixed
+- The tool no longer breaks when the GitHub search response includes pull requests with assignees.
+- If Trello authentication fails (e.g. expired server token), the program no longer terminates prematurely. Instead, an error message is displayed and the final report will not include Trello cards.
+
 ## [1.0.2] - 2022-03-20
 
 ### Fixed

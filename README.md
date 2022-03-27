@@ -68,9 +68,9 @@ self-assessment --trello-token <TRELLO_TOKEN>
 Running `self-assessment` from the terminal will now generate a report including Trello cards assigned to you, as well as your authored and reviewed GitHub pull requests. The `--from <YYYY-MM-DD>` and `--to <YYYY--MM-DD>` flags are fully supported.
 ## CLI information
 ```
-self-assessment 1.0.2
+self-assessment 1.1.0
 A CLI tool that generates a list of pull requests raised and reviewed in the Guardian's GitHub
-organisation.
+organisation, as well as an optional summary of the user's Trello boards and cards.
 
 USAGE:
     self-assessment [OPTIONS]
@@ -79,7 +79,7 @@ OPTIONS:
     -a, --auth-token <AUTH_TOKEN>
             Github authentication token. This is needed for the CLI tool to access the Guardian's
             private repositories to which the user has access. You can get a personal access token
-            at https://github.com/settings/tokens/new
+            at <https://github.com/settings/tokens/new>
 
     -f, --from <FROM>
             Match PRs and Trello cards that were created after this date [default: *]
@@ -87,18 +87,22 @@ OPTIONS:
     -h, --help
             Print help information
 
+    -s, --skip-trello
+            Skip Trello report. Passing this flag generates a report that does not include Trello
+            cards
+
     -t, --to <TO>
             Match PRs and Trello cards that were created up until this date [default: *]
 
         --trello-key <TRELLO_KEY>
-            Trello API key. You can get an API key at https://trello.com/app-key Note: you need to
+            Trello API key. You can get an API key at <https://trello.com/app-key> Note: you need to
             be logged into Trello to be able to see the page. Both the API key and the server token
             need to be set for the generated report to include Trello cards
 
         --trello-token <TRELLO_TOKEN>
             Trello server token. You can get a server token by following the link at
-            https://trello.com/app-key Both the API key and the server token need to be set for the
-            generated report to include Trello cards
+            <https://trello.com/app-key> Both the API key and the server token need to be set for
+            the generated report to include Trello cards
 
     -V, --version
             Print version information

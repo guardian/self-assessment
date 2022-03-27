@@ -39,7 +39,7 @@ pub struct GithubSearchResponseItem {
     pub user: User,
     pub labels: Vec<Label>,
     pub state: String,
-    pub assignee: Option<String>,
+    pub assignee: Option<User>,
     pub milestone: Option<Milestone>,
     pub comments: u32,
     pub created_at: String,

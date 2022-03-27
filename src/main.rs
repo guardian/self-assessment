@@ -65,30 +65,36 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let mut trello_user = None;
     let mut formatted_trello_cards = None;
 
-    if trello_key.is_some() && trello_token.is_some() {
+    if trello_key.is_some() && trello_token.is_some() && !args.skip_trello {
         let trello_client = reqwest::ClientBuilder::new().build()?;
-        let user = search_trello_user(
+        let maybe_user = search_trello_user(
             &trello_client,
             trello_key.as_ref().unwrap().to_string(),
             trello_token.as_ref().unwrap().to_string(),
         )
-        .await?;
+        .await;
 
-        let trello_cards = search_trello(
-            &trello_client,
-            trello_key.as_ref().unwrap().to_string(),
-            trello_token.as_ref().unwrap().to_string(),
-            &user,
-            &args,
-        )
-        .await?;
+        match maybe_user {
+            Ok(user) => {
+                let trello_cards = search_trello(
+                    &trello_client,
+                    trello_key.as_ref().unwrap().to_string(),
+                    trello_token.as_ref().unwrap().to_string(),
+                    &user,
+                    &args,
+                )
+                .await?;
 
-        trello_user = Option::from(user);
-        formatted_trello_cards = Option::from(format_trello_cards(&trello_cards));
+                trello_user = Option::from(user);
+                formatted_trello_cards = Option::from(format_trello_cards(&trello_cards));
+            }
+            Err(err) => {
+                eprintln!("[self-assessment] 🚫 Trello error: \"{}\"", err);
+                eprintln!("[self-assessment] 🚫 Make sure your Trello API key is correct and your server token hasn't expired. If the error persists, use the --skip-trello flag.");
+            }
+        }
     } else {
-        println!(
-            "[self-assessment] ⏩ Skipping Trello report because either the Trello API key or the Trello server token has not been set."
-        )
+        println!("[self-assessment] ⏩ Skipping Trello report.");
     }
 
     // Generate HTML file

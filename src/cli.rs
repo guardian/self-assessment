@@ -15,13 +15,13 @@ pub struct Args {
     /// Github authentication token.
     /// This is needed for the CLI tool to access
     /// the Guardian's private repositories to which the user has access.
-    /// You can get a personal access token at https://github.com/settings/tokens/new
+    /// You can get a personal access token at <https://github.com/settings/tokens/new>
     #[clap(short, long)]
     #[serde(rename = "auth-token")]
     pub auth_token: Option<String>,
 
     /// Trello API key.
-    /// You can get an API key at https://trello.com/app-key
+    /// You can get an API key at <https://trello.com/app-key>
     /// Note: you need to be logged into Trello to be able to see the page.
     /// Both the API key and the server token need to be set for the generated report
     /// to include Trello cards.
@@ -30,12 +30,18 @@ pub struct Args {
     pub trello_key: Option<String>,
 
     /// Trello server token.
-    /// You can get a server token by following the link at https://trello.com/app-key
+    /// You can get a server token by following the link at <https://trello.com/app-key>
     /// Both the API key and the server token need to be set for the generated report
     /// to include Trello cards.
     #[clap(long)]
     #[serde(rename = "trello-token")]
     pub trello_token: Option<String>,
+
+    /// Skip Trello report.
+    /// Passing this flag generates a report that does not include Trello cards.
+    #[clap(short, long)]
+    #[serde(rename = "skip-trello")]
+    pub skip_trello: bool,
 }
 
 #[derive(Debug)]

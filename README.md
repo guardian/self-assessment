@@ -68,7 +68,7 @@ self-assessment --trello-token <TRELLO_TOKEN>
 Running `self-assessment` from the terminal will now generate a report including Trello cards assigned to you, as well as your authored and reviewed GitHub pull requests. The `--from <YYYY-MM-DD>` and `--to <YYYY--MM-DD>` flags are fully supported.
 ## CLI information
 ```
-self-assessment 1.1.0
+self-assessment 1.1.1
 A CLI tool that generates a list of pull requests raised and reviewed in the Guardian's GitHub
 organisation, as well as an optional summary of the user's Trello boards and cards.
 

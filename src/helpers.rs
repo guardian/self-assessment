@@ -423,6 +423,8 @@ pub fn generate_html_file(
 
     // GitHub Template
     data.insert("github_user".to_string(), to_json(user.login));
+    data.insert("start_date".to_string(), to_json(from));
+    data.insert("end_date".to_string(), to_json(to));
     data.insert("prs".to_string(), to_json(prs));
     data.insert("reviews".to_string(), to_json(reviews));
     data.insert("prs_len".to_string(), to_json(prs.len()));
@@ -441,8 +443,6 @@ pub fn generate_html_file(
         c_len = cards_len;
         data.insert("cards_len".to_string(), to_json(cards_len));
         data.insert("user".to_string(), to_json(u));
-        data.insert("start_date".to_string(), to_json(from));
-        data.insert("end_date".to_string(), to_json(to));
         data.insert("display_trello".to_string(), to_json(true));
         board_len = b_len;
     }

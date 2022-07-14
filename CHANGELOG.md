@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
+## [1.1.2] - 2022-03-28
+
+### Changed
+- Archived Trello cards are now also displayed in the Trello report.
+
 ## [1.1.1] - 2022-03-28
 
 ### Fixed

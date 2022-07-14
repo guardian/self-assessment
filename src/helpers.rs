@@ -217,7 +217,7 @@ pub async fn search_trello(
     for (board_id, board_name) in board_ids {
         let all_cards_in_board: Vec<TrelloCard> = trello_client
         .get(format!(
-            "https://api.trello.com/1/boards/{}/cards?key={}&token={}&fields=url,idMembers,name,desc,dateLastActivity,labels", 
+            "https://api.trello.com/1/boards/{}/cards/all?key={}&token={}&fields=url,idMembers,name,desc,dateLastActivity,labels",
             board_id,
             &trello_key,
             &trello_token

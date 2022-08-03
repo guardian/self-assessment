@@ -3,13 +3,14 @@ All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
-## [1.1.2] - 2022-03-28
+## [1.1.2] - 2022-08-03
 
 ### Changed
 - Archived Trello cards are now also displayed in the Trello report.
 
 ### Fixed
 - Fixed an issue where Github IDs exceeded the storage space assigned to them.
+- Patched a [security vulnerability](https://groups.google.com/g/rustlang-security-announcements/c/NcNNL1Jq7Yw?pli=1) for the `regex` crate.
 
 ## [1.1.1] - 2022-03-28
 

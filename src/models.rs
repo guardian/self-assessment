@@ -32,7 +32,7 @@ pub struct GithubSearchResponseItem {
     pub comments_url: String,
     pub events_url: String,
     pub html_url: String,
-    pub id: u32,
+    pub id: u64,
     pub node_id: String,
     pub number: u32,
     pub title: String,
@@ -63,7 +63,7 @@ pub struct PullRequest {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct User {
     pub login: String,
-    pub id: u32,
+    pub id: u64,
     pub node_id: String,
     pub avatar_url: String,
     pub gravatar_id: String,
@@ -83,7 +83,7 @@ pub struct User {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Label {
-    pub id: u32,
+    pub id: u64,
     pub node_id: String,
     pub url: String,
     pub name: String,
@@ -95,7 +95,7 @@ pub struct Milestone {
     pub url: String,
     pub html_url: String,
     pub labels_url: String,
-    pub id: u32,
+    pub id: u64,
     pub node_id: String,
     pub number: u32,
     pub state: String,

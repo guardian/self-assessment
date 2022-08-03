@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 ### Changed
 - Archived Trello cards are now also displayed in the Trello report.
 
+### Fixed
+- Fixed an issue where Github IDs exceeded the storage space assigned to them.
+
 ## [1.1.1] - 2022-03-28
 
 ### Fixed

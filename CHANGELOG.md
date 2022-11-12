@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [2.0.0] - 2022-11-12
 ### Changed
-- Usage of the CLI has changed - you can now use the following subcommands:
+- Usage of the CLI has changed. You can now use the following subcommands:
     - `self-assessment auth <TOKEN>` to provide the Github authentication token.
     - `self-assessment trello-auth <API_KEY> <TOKEN>` to provide the Trello Api key and server token.
     - `self-assessment generate-report [--from <YYYY-MM-DD>] [--to <YYYY-MM-DD>] [--skip-trello]` to generate a report. The flags in square brackets are optional.

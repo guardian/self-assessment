@@ -3,9 +3,9 @@ on:
     branches:
       - main
     paths:
-      - 'src/**'
-      - '**/Cargo.lock'
-      - '**/Cargo.toml'
+      - "src/**"
+      - "**/Cargo.lock"
+      - "**/Cargo.toml"
 
 name: Release Packaging
 
@@ -24,7 +24,7 @@ jobs:
           override: true
       - name: Release Build
         run: cargo build --release
-      - name: 'Upload Artifact'
+      - name: "Upload Artifact"
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.PROJECT_NAME }}

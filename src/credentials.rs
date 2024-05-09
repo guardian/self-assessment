@@ -27,7 +27,7 @@ pub fn set_credentials(
 /// Credentials live in `~/.selfassessment`
 pub fn get_auth_token(flag: AuthType) -> Option<String> {
     let credential_store_path = format!("{}/.selfassessment", shellexpand::tilde("~/"));
-    let mut credential_store = match Ini::load_from_file(&credential_store_path) {
+    let mut credential_store = match Ini::load_from_file(credential_store_path) {
         Ok(ini) => ini,
         Err(_) => Ini::new(),
     };

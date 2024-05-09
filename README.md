@@ -18,8 +18,9 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 3. You can now start using the CLI tool! But first, you need to generate a GitHub personal access token 👉 [here](https://github.com/settings/tokens/new) 👈\
 This is required for the tool to access your pull requests in private repositories within the Guardian organisation.\
-Set your preferred expiration date and make sure you grant the **repo** scopes (avoid "No expiration" for security reasons). Finally, click "Generate token".\
-**NB**: You will need to re-authenticate once the token expires.
+Set your preferred expiration date and make sure you grant the **repo** scopes (avoid "No expiration" for security reasons). Then, click "Generate token".\
+Once the token is created, you may need to authorise the guardian organisation to access this token. Click "Configure SSO", then the "Authorize" button beside the guardian organisation.\
+**NB**: You will need to re-authenticate once the token expires.\
 <img width="744" alt="image" src="https://user-images.githubusercontent.com/57295823/153786937-19a8bda1-2d2c-4df2-9fd0-682b6a15228f.png">
 
 

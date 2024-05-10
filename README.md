@@ -45,14 +45,16 @@ If all goes well, you should see an automatically generated HTML page containing
 ## Trello report
 In order to display the Trello cards your name is assigned to, you need to configure the CLI with a Trello API key and a token.
 #### Step 1
-You can obtain a key by [logging into Trello](https://trello.com/login) and then visiting https://trello.com/app-key (**please note that this page will throw an error if you are not logged in**). Make a note of this key.
+You can obtain a key by [logging into Trello](https://trello.com/login) and then visiting https://trello.com/power-ups/admin/ (**please note that this page will throw an error if you are not logged in**).
+
+You will need to create a 'Power-Up', with the workspace as 'Guardian News & Media' - the other fields, e.g. the 'iframe connector URL' do not seem to be important. 
 
 #### Step 2
-From the [same page](https://trello.com/app-key), click the link to generate a server token. 
+The new power-up will include an API Key, with a link in the accompanying text to 'manually generate a Token'.
 
-<img width="613" alt="image" src="https://user-images.githubusercontent.com/57295823/155423334-0483e732-4bf5-4317-bc07-2a550473303f.png">
+<img width="613" alt="image" src="https://github.com/guardian/self-assessment/assets/34686302/bedbdda5-d9db-4464-8bf7-09ecd23a0747">
 
-You will be taken to a page to generate a sever token, which is set to never expire by default (`authorize?expiration=never`). It is strongly recommended that you change the query parameter in the URL to `authorize?expiration=30days` for security reasons.
+You will be taken to a page to generate the token. Take note of the token and the API key.
 
 Once you have obtained both your API key and your server token, run the following command from the terminal:
 

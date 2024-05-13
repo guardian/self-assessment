@@ -1,6 +1,6 @@
 [package]
 name = "self-assessment"
-version = "2.0.0"
+version = "2.1.0"
 edition = "2021"
 description = "A CLI tool that generates a list of pull requests raised and reviewed in the Guardian's GitHub organisation, as well as an optional summary of the user's Trello boards and cards."
 license = "MIT"
@@ -18,7 +18,7 @@ clap = { version = "3.0.14", features = ["derive"] }
 octocrab = "0.15.0"
 serde = { version = "1.0.132", features = ["derive"] }
 url = "2.2.2"
-markdown = "0.3"
+markdown = "1.0.0-alpha.17"
 shellexpand = "2.1.0"
 rust-ini = "0.17"
 handlebars = "4.2.1"

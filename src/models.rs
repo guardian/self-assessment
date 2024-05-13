@@ -1,4 +1,4 @@
-use chrono::Utc;
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
 
@@ -42,9 +42,9 @@ pub struct GithubSearchResponseItem {
     pub assignee: Option<User>,
     pub milestone: Option<Milestone>,
     pub comments: u32,
-    pub created_at: String,
-    pub updated_at: String,
-    pub closed_at: Option<String>,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
+    pub closed_at: Option<DateTime<Utc>>,
     pub pull_request: PullRequest,
     pub body: Option<String>,
     pub score: f32,
@@ -58,6 +58,7 @@ pub struct PullRequest {
     pub html_url: String,
     pub diff_url: String,
     pub patch_url: String,
+    pub merged_at: Option<DateTime<Utc>>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -104,10 +105,10 @@ pub struct Milestone {
     pub creator: User,
     pub open_issues: u32,
     pub closed_issues: u32,
-    pub created_at: String,
-    pub updated_at: Option<String>,
-    pub closed_at: Option<String>,
-    pub due_on: Option<String>,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: Option<DateTime<Utc>>,
+    pub closed_at: Option<DateTime<Utc>>,
+    pub due_on: Option<DateTime<Utc>>,
 }
 
 #[derive(Serialize)]
@@ -138,7 +139,7 @@ pub struct TrelloCard {
     pub desc: String,
     pub id_members: Vec<String>,
     pub url: String,
-    pub date_last_activity: chrono::DateTime<Utc>,
+    pub date_last_activity: DateTime<Utc>,
     pub labels: Vec<TrelloLabel>,
 }
 

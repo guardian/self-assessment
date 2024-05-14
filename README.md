@@ -25,7 +25,6 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
    - Set the resource owner to `guardian`
    - Set repository access to `All repositories`
    - Grant the following repository permissions
-     - contents:read
      - pull-requests:read
      - metadata:read (this is already selected by default)
    - Then, click "Generate token".\

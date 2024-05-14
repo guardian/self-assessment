@@ -19,12 +19,18 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 2. Run `cargo install self-assessment` to install or update the CLI tool to the latest version.
 
-3. You can now start using the CLI tool! But first, you need to generate a GitHub personal access token 👉 [here](https://github.com/settings/tokens/new) 👈\
+3. You can now start using the CLI tool! But first, you need to generate a GitHub personal access token 👉 [here](https://github.com/settings/tokens?type=beta) 👈\
    This is required for the tool to access your pull requests in private repositories within the Guardian organisation.\
-   Set your preferred expiration date and make sure you grant the **repo** scopes (avoid "No expiration" for security reasons). Then, click "Generate token".\
-   Once the token is created, you may need to authorise the guardian organisation to access this token. Click "Configure SSO", then the "Authorize" button beside the guardian organisation.\
+   - Set your preferred expiration date
+   - Set the resource owner to `guardian`
+   - Set repository access to `All repositories`
+   - Grant the following repository permissions
+     - pull-requests:read
+     - metadata:read (this is already selected by default)
+   - Then, click "Generate token".\
+
    **NB**: You will need to re-authenticate once the token expires.\
-   <img width="744" alt="image" src="https://user-images.githubusercontent.com/57295823/153786937-19a8bda1-2d2c-4df2-9fd0-682b6a15228f.png">
+   <img width="744" alt="image" src="img/permissions.png">
 
 4. Set the access token by running the following command (replace `<TOKEN>` with the generated token):
 

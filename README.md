@@ -9,22 +9,29 @@
 Assessing oneself is hard - this tool aims to make the process a little bit easier.\
 It is not meant to be the be-all and end-all of the self-assessment journey. Use it as a starting point to remember your contributions to the Guardian.
 
-## How?
+## Installation
 
-1. You need Rust to install `self-assessment`. Running the following command will install the Rust toolchain on your machine. If Rust is already installed, skip this step.
+You can install this CLI in two ways:
 
-```shell
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-```
+- Homebrew (recommended). If you choose to do so, run the following commands:
 
-2. Run `cargo install self-assessment` to install or update the CLI tool to the latest version.
+  1. First `brew tap guardian/homebrew-devtools`
+  2. Then `brew install self-assessment`
 
-3. You can now start using the CLI tool! But first, you need to generate a GitHub personal access token 👉 [here](https://github.com/settings/tokens/new) 👈\
-   This is required for the tool to access your pull requests in private repositories within the Guardian organisation.\
-   Set your preferred expiration date and make sure you grant the **repo** scopes (avoid "No expiration" for security reasons). Then, click "Generate token".\
-   Once the token is created, you may need to authorise the guardian organisation to access this token. Click "Configure SSO", then the "Authorize" button beside the guardian organisation.\
-   **NB**: You will need to re-authenticate once the token expires.\
-   <img width="744" alt="image" src="https://user-images.githubusercontent.com/57295823/153786937-19a8bda1-2d2c-4df2-9fd0-682b6a15228f.png">
+- Cargo. If you choose this option, you will need the Rust toolchain installed on your machine. Follow the steps below:
+
+  1. Running the following command will install the Rust toolchain on your machine (skip this step if Rust is already installed): `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
+
+  2. Run `cargo install self-assessment` to install or update the CLI tool to the latest version.
+
+## Using the tool
+
+You can now start using the CLI tool! But first, you need to generate a GitHub personal access token 👉 [here](https://github.com/settings/tokens/new) 👈\
+ This is required for the tool to access your pull requests in private repositories within the Guardian organisation.\
+ Set your preferred expiration date and make sure you grant the **repo** scopes (avoid "No expiration" for security reasons). Then, click "Generate token".\
+ Once the token is created, you may need to authorise the guardian organisation to access this token. Click "Configure SSO", then the "Authorize" button beside the guardian organisation.\
+ **NB**: You will need to re-authenticate once the token expires.\
+ <img width="744" alt="image" src="https://user-images.githubusercontent.com/57295823/153786937-19a8bda1-2d2c-4df2-9fd0-682b6a15228f.png">
 
 4. Set the access token by running the following command (replace `<TOKEN>` with the generated token):
 

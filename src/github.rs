@@ -46,10 +46,10 @@ pub fn calc_label_colour(colour: &str) -> String {
     hsl.to_css_string()
 }
 
-pub async fn search_pull_requests<'a>(
+pub async fn search_pull_requests(
     client: &Octocrab,
     pr_type: GuardianPullRequests,
-    params: &mut HashMap<&'static str, Cow<'a, str>>,
+    params: &mut HashMap<&'static str, Cow<'_, str>>,
     from: &str,
     to: &str,
 ) -> anyhow::Result<Vec<GithubSearchResponseItem>> {

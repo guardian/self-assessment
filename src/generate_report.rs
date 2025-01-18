@@ -227,5 +227,4 @@ pub async fn generate_report(from: String, to: String, skip_trello: bool) -> any
             process::exit(1);
         }
     }
-    Ok(())
 }

@@ -16,12 +16,8 @@ jobs:
       PROJECT_NAME: self-assessment
     runs-on: ubuntu-latest
     steps:
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
       - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
       - name: Release Build
         run: cargo build --release
       - name: "Upload Artifact"

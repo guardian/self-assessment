@@ -16,12 +16,12 @@ jobs:
       PROJECT_NAME: self-assessment
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
           toolchain: stable
           override: true
+      - uses: actions/checkout@v4
       - name: Release Build
         run: cargo build --release
       - name: "Upload Artifact"

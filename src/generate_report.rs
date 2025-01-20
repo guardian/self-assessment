@@ -39,7 +39,7 @@ fn array_length_helper(
 }
 
 pub fn generate_html_file(
-    user: octocrab::models::User,
+    user: octocrab::models::Author,
     prs: &[TemplatePr],
     reviews: &[TemplatePr],
     trello_user: &Option<TrelloUser>,

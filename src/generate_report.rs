@@ -215,12 +215,16 @@ pub async fn generate_report(from: String, to: String, skip_trello: bool) -> any
         Ok(file_name) => {
             let mut open = Command::new("open");
             open.arg(file_name);
-            open.exec();
+            // Exec the opening of the file.
+            // If all goes well, this will never return.
+            // If it does return, it will always retun an error.
+            let err = open.exec();
+            eprintln!("Error opening file: {}", err);
+            process::exit(1);
         }
         Err(err) => {
             eprintln!("{}", err);
             process::exit(1);
         }
     }
-    Ok(())
 }

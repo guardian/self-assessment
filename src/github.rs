@@ -41,15 +41,15 @@ pub fn calc_label_colour(colour: &str) -> String {
     let rgb = Rgb::from_hex_str(colour).unwrap();
     let perceived_lightness =
         (rgb.red() * 0.2126 + rgb.green() * 0.7152 + rgb.blue() * 0.0722) / 255.0;
-    let lightness_switch = f64::max(0.0, f64::min(1.0, (perceived_lightness - 0.453) * -1000.0));
+    let lightness_switch = ((perceived_lightness - 0.453) * -1000.0).clamp(0.0, 1.0);
     let hsl = Hsl::new(0.0, 0.0, lightness_switch * 100.0, Some(1.0));
     hsl.to_css_string()
 }
 
-pub async fn search_pull_requests<'a>(
+pub async fn search_pull_requests(
     client: &Octocrab,
     pr_type: GuardianPullRequests,
-    params: &mut HashMap<&'static str, Cow<'a, str>>,
+    params: &mut HashMap<&'static str, Cow<'_, str>>,
     from: &str,
     to: &str,
 ) -> anyhow::Result<Vec<GithubSearchResponseItem>> {

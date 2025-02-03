@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
+## [2.2.0] - 2024-01-22
+
+### Fixed
+
+- Updated a number of dependencies to keep up-to-date and address vulnerabilities.
+
 ## [2.1.0] - 2024-05-13
 
 ### Changed

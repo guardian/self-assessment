@@ -89,7 +89,7 @@ pub async fn search_pull_requests(
 
         params.insert("page", Cow::from(count.to_string()));
         let result: Result<GithubSearchResponse, octocrab::Error> =
-            client.get("search/issues", Some(&params)).await;
+            client.get("/search/issues", Some(&params)).await;
         match result {
             Ok(mut response) => {
                 all_results.append(&mut response.items);

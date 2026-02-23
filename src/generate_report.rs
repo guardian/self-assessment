@@ -166,37 +166,39 @@ pub async fn generate_report(from: String, to: String, skip_trello: bool) -> any
     let mut trello_user = None;
     let mut formatted_trello_cards = None;
 
-    if trello_key.is_some() && trello_token.is_some() && !skip_trello {
-        let trello_client = reqwest::ClientBuilder::new().build()?;
-        let maybe_user = search_trello_user(
-            &trello_client,
-            trello_key.as_ref().unwrap().to_string(),
-            trello_token.as_ref().unwrap().to_string(),
-        )
-        .await;
+    if !skip_trello {
+        match (trello_key, trello_token) {
+            (Some(trello_key), Some(trello_token)) => {
+                let trello_client = reqwest::ClientBuilder::new().build()?;
+                let maybe_user =
+                    search_trello_user(&trello_client, trello_key.clone(), trello_token.clone())
+                        .await;
 
-        match maybe_user {
-            Ok(user) => {
-                let trello_cards = search_trello(
-                    &trello_client,
-                    trello_key.as_ref().unwrap().to_string(),
-                    trello_token.as_ref().unwrap().to_string(),
-                    &user,
-                    &from,
-                    &to,
-                )
-                .await?;
+                match maybe_user {
+                    Ok(user) => {
+                        let trello_cards = search_trello(
+                            &trello_client,
+                            trello_key,
+                            trello_token,
+                            &user,
+                            &from,
+                            &to,
+                        )
+                        .await?;
 
-                trello_user = Option::from(user);
-                formatted_trello_cards = Option::from(format_trello_cards(&trello_cards));
+                        trello_user = Option::from(user);
+                        formatted_trello_cards = Option::from(format_trello_cards(&trello_cards));
+                    }
+                    Err(err) => {
+                        eprintln!("[self-assessment] 🚫 Trello error: \"{}\"", err);
+                        eprintln!("[self-assessment] 🚫 Make sure your Trello API key is correct and your server token hasn't expired. If the error persists, use the --skip-trello flag.");
+                    }
+                }
             }
-            Err(err) => {
-                eprintln!("[self-assessment] 🚫 Trello error: \"{}\"", err);
-                eprintln!("[self-assessment] 🚫 Make sure your Trello API key is correct and your server token hasn't expired. If the error persists, use the --skip-trello flag.");
+            (_, _) => {
+                println!("[self-assessment] ⏩ Skipping Trello report.");
             }
         }
-    } else {
-        println!("[self-assessment] ⏩ Skipping Trello report.");
     }
 
     // Generate HTML file

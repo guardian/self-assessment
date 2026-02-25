@@ -81,7 +81,7 @@ Running `self-assessment generate-report` from the terminal will now generate a 
 ## CLI information
 
 ```
-self-assessment 2.2.0
+self-assessment 2.2.1
 A CLI tool that generates a list of pull requests raised and reviewed in the Guardian's GitHub
 organisation, as well as an optional summary of the user's Trello boards and cards.
 
